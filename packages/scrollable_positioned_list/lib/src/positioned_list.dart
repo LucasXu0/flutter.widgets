@@ -44,9 +44,7 @@ class PositionedList extends StatefulWidget {
     this.addSemanticIndexes = true,
     this.addRepaintBoundaries = true,
     this.addAutomaticKeepAlives = true,
-  })  : assert(itemCount != null),
-        assert(itemBuilder != null),
-        assert((positionedIndex == 0) || (positionedIndex < itemCount)),
+  })  : assert((positionedIndex == 0) || (positionedIndex < itemCount)),
         super(key: key);
 
   /// Number of items the [itemBuilder] can produce.
@@ -184,9 +182,10 @@ class _PositionedListState extends State<PositionedList> {
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) => widget.separatorBuilder == null
-                        ? _buildItem(widget.positionedIndex - (index + 1))
+                        ? _buildItem(
+                            context, widget.positionedIndex - (index + 1))
                         : _buildSeparatedListElement(
-                            2 * widget.positionedIndex - (index + 1)),
+                            context, 2 * widget.positionedIndex - (index + 1)),
                     childCount: widget.separatorBuilder == null
                         ? widget.positionedIndex
                         : 2 * widget.positionedIndex,
@@ -202,9 +201,9 @@ class _PositionedListState extends State<PositionedList> {
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) => widget.separatorBuilder == null
-                      ? _buildItem(index + widget.positionedIndex)
+                      ? _buildItem(context, index + widget.positionedIndex)
                       : _buildSeparatedListElement(
-                          index + 2 * widget.positionedIndex),
+                          context, index + 2 * widget.positionedIndex),
                   childCount: widget.itemCount != 0 ? 1 : 0,
                   addSemanticIndexes: false,
                   addRepaintBoundaries: widget.addRepaintBoundaries,
@@ -219,9 +218,10 @@ class _PositionedListState extends State<PositionedList> {
                 sliver: SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) => widget.separatorBuilder == null
-                        ? _buildItem(index + widget.positionedIndex + 1)
+                        ? _buildItem(
+                            context, index + widget.positionedIndex + 1)
                         : _buildSeparatedListElement(
-                            index + 2 * widget.positionedIndex + 1),
+                            context, index + 2 * widget.positionedIndex + 1),
                     childCount: widget.separatorBuilder == null
                         ? widget.itemCount - widget.positionedIndex - 1
                         : 2 * (widget.itemCount - widget.positionedIndex - 1),
@@ -235,15 +235,15 @@ class _PositionedListState extends State<PositionedList> {
         ),
       );
 
-  Widget _buildSeparatedListElement(int index) {
+  Widget _buildSeparatedListElement(BuildContext context, int index) {
     if (index.isEven) {
-      return _buildItem(index ~/ 2);
+      return _buildItem(context, index ~/ 2);
     } else {
       return widget.separatorBuilder!(context, index ~/ 2);
     }
   }
 
-  Widget _buildItem(int index) {
+  Widget _buildItem(BuildContext context, int index) {
     return RegisteredElementWidget(
       key: ValueKey(index),
       child: widget.addSemanticIndexes
